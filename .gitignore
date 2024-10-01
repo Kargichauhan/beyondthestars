@@ -1,0 +1,10 @@
+# Virtual environment
+exosky_env/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Other common files to ignore
+.DS_Store
+*.log
