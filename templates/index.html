@@ -5,18 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flask Frontend</title>
     <link rel="stylesheet" href="/static/style.css"> <!-- Optional CSS -->
+    <style>
+        .scrollable-list {
+            max-height: 200px; /* Adjust height as needed */
+            overflow-y: auto;  /* Enable vertical scrolling */
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .scrollable-list ul {
+            list-style-type: none; /* Remove default list styling */
+            padding: 0;           /* Remove padding */
+            margin: 0;            /* Remove margin */
+        }
+        .planet-item {
+            cursor: pointer;      /* Change cursor to pointer */
+            padding: 5px;
+            border-radius: 3px;
+        }
+        .planet-item:hover {
+            background-color: #e0e0e0; /* Highlight on hover */
+        }
+        /* Spinner styles */
+        .spinner {
+            display: none; /* Hidden by default */
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin-left: 10px; /* Space between button and spinner */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
     <h1>Flask Service</h1>
+    
     <form id="data-form">
         <input type="text" id="name" placeholder="Enter your name" required>
         <button type="submit">Submit</button>
     </form>
+    
+    <button id="fetch-exoplanet">Get Exoplanet Data</button>
+    <div class="spinner" id="loading-spinner"></div> <!-- Spinner div -->
+    
     <div id="response"></div>
+    <div class="scrollable-list">
+        <ul id="exoplanet-data"></ul>
+    </div>
+    <div id="selected-planet" style="margin-top: 10px; font-weight: bold;"></div> <!-- Selected planet display -->
 
     <script>
         document.getElementById('data-form').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent the default form submission
+            event.preventDefault();
             
             const name = document.getElementById('name').value;
 
@@ -32,6 +80,31 @@
                 document.getElementById('response').innerText = data.message;
             })
             .catch(error => console.error('Error:', error));
+        });
+
+        document.getElementById('fetch-exoplanet').addEventListener('click', function() {
+            const spinner = document.getElementById('loading-spinner');
+            spinner.style.display = 'inline-block'; // Show the spinner
+
+            fetch('/api/exoplanet')
+                .then(response => response.json())
+                .then(data => {
+                    const exoplanetList = document.getElementById('exoplanet-data');
+                    exoplanetList.innerHTML = ''; // Clear previous results
+                    data.forEach(planet => {
+                        const listItem = document.createElement('li');
+                        listItem.className = 'planet-item';
+                        listItem.innerText = `${planet.pl_name} ${planet.ra} ${planet.dec}`; // Display the planet name
+                        listItem.onclick = function() {
+                            document.getElementById('selected-planet').innerText = `Selected Planet: ${planet.pl_name}`;
+                        }; // Add click event to select the planet
+                        exoplanetList.appendChild(listItem);
+                    });
+                })
+                .catch(error => console.error('Error:', error))
+                .finally(() => {
+                    spinner.style.display = 'none'; // Hide the spinner
+                });
         });
     </script>
 </body>
