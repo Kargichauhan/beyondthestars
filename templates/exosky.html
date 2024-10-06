@@ -303,25 +303,7 @@
     <div class="container">
         
         <div class="row justify-content-center">
-            <div class="col-lg-6 mx-auto mbr-form" data-form-type="formoid">
-<!--Formbuilder Form-->
-<form action="https://mobirise.eu/" method="POST" class="mbr-form form-with-styler" data-form-title="planetSelect"><input type="hidden" name="email" data-form-email="true" value="xuvt7IWRwQxI9LPi6je3O2vHLfbxB2i4Cm034xcvhA5dAF2w+31MGzGdRNinfMhThJ8WplA24bdjl3RXmMiOiry5vxtlHL4YFsqIkoZK1VS2Se4qdcABdAiPHkO+95BM.bbRb+PtaZc63Yfa4sbf/f5MWgKTBUdPbat74ghlwutuiKiwwRSL+JDrpNyjqndLnb5UWc1KchDC0ADmgighe+2HkiD3heqKIz9xIG5QlN55bh+eHB0Ze/Sr7PjOQAf2D">
-<div class="row">
-<div hidden="hidden" data-form-alert="" class="alert alert-success col-12"></div>
-<div hidden="hidden" data-form-alert-danger="" class="alert alert-danger col-12"> Oops...! some problem! </div>
-</div>
-<div class="dragArea row">
-<div class="col-lg-9 col-md-12 col-sm-12 form-group" data-for="select">
-    <!-- <select name="select" data-form-field="select" class="scrollable-list form-control form-select display-7" id="select-form1-1w">
-<option value="Planet 1">Planet 1</option>
-<option value="Planet 2">Planet 2</option>
-<option value="Planet 3">Planet 3</option>
-</select> -->
-</div>
-<div class="col-lg-3 col-md-12 col-sm-12 mbr-section-btn"><button type="submit" class="w-100 btn btn-danger display-4">Exosky</button></div>
-</div>
-</form><!--Formbuilder Form-->
-<button id="fetch-exoplanet">Get Exoplanet Data</button>
+<div class="mbr-section-btn-main"><button class="btn btn-secondary display-4" id="fetch-exoplanet">Load all available exoplanets from NASA</button></div>
     <div class="spinner" id="loading-spinner"></div> <!-- Spinner div -->
     
     <div id="response"></div>
@@ -329,8 +311,20 @@
         <ul id="exoplanet-data"></ul>
     </div>
     <div id="selected-planet" style="margin-top: 10px; font-weight: bold;"></div> <!-- Selected planet display -->
-
-</div>
+    <h3>Calculate Cartesian Coordinates</h3>
+    <form id="cartesian-form">
+        <input type="number" id="sy_dist" step="any"  placeholder="sy_dist (parsecs)" required>
+        <input type="number" id="ra" step="any" placeholder="Right Ascension (degrees)" required>
+        <input type="number" id="dec" step="any" placeholder="Declination (degrees)" required>
+        <button type="submit">Calculate</button>
+    </form>
+    <div id="cartesian-coords" style="margin-top: 10px; font-weight: bold;"></div> <!-- Display Cartesian coordinates -->
+    <div class="mbr-section-btn-main" role="tablist"><button class="btn btn-secondary display-4" id="fetch-positions">Get 10 Nearest stars from the Planet ordered by brightness</button>
+    </div>
+    <div id="response2"></div>
+    <div class="mbr-section-btn-main" role="tablist"><a class="btn btn-secondary display-4" href="/threed">
+        Planetview
+    </a></div>
         </div>
     </div>
 </section>
