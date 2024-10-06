@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flask Frontend</title>
-    <link rel="stylesheet" href="/static/style.css"> <!-- Optional CSS -->
+    <link rel="stylesheet" href="/static/styles.css"> <!-- Optional CSS -->
     <style>
         .scrollable-list {
             max-height: 200px; /* Adjust height as needed */
@@ -62,7 +62,18 @@
     </div>
     <div id="selected-planet" style="margin-top: 10px; font-weight: bold;"></div> <!-- Selected planet display -->
 
+    <h3>Calculate Cartesian Coordinates</h3>
+    <form id="cartesian-form">
+        <input type="number" id="sy_dist" step="any"  placeholder="sy_dist (parsecs)" required>
+        <input type="number" id="ra" step="any" placeholder="Right Ascension (degrees)" required>
+        <input type="number" id="dec" step="any" placeholder="Declination (degrees)" required>
+        <button type="submit">Calculate</button>
+    </form>
+    <div id="cartesian-coords" style="margin-top: 10px; font-weight: bold;"></div> <!-- Display Cartesian coordinates -->
+
     <script>
+        let selectedPlanetData = {}; // Store selected planet data
+
         document.getElementById('data-form').addEventListener('submit', function(event) {
             event.preventDefault();
             
@@ -94,10 +105,20 @@
                     data.forEach(planet => {
                         const listItem = document.createElement('li');
                         listItem.className = 'planet-item';
-                        listItem.innerText = `${planet.pl_name} ${planet.ra} ${planet.dec}`; // Display the planet name
+                        listItem.innerText = planet.pl_name; // Display the planet name
                         listItem.onclick = function() {
                             document.getElementById('selected-planet').innerText = `Selected Planet: ${planet.pl_name}`;
-                        }; // Add click event to select the planet
+                            // Store selected planet data
+                            selectedPlanetData = {
+                                sy_dist: planet.sy_dist, // Assuming these properties exist
+                                ra: planet.ra,
+                                dec: planet.dec
+                            };
+                            // Populate input fields
+                            document.getElementById('sy_dist').value = selectedPlanetData.sy_dist;
+                            document.getElementById('ra').value = selectedPlanetData.ra;
+                            document.getElementById('dec').value = selectedPlanetData.dec;
+                        };
                         exoplanetList.appendChild(listItem);
                     });
                 })
@@ -105,6 +126,26 @@
                 .finally(() => {
                     spinner.style.display = 'none'; // Hide the spinner
                 });
+        });
+
+        document.getElementById('cartesian-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const { sy_dist, ra, dec } = selectedPlanetData;
+            const distance = sy_dist
+
+            fetch('/api/cartesian', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ distance, ra, dec })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('cartesian-coords').innerText = `Cartesian Coordinates: X: ${data.x}, Y: ${data.y}, Z: ${data.z}`;
+            })
+            .catch(error => console.error('Error:', error));
         });
     </script>
 </body>

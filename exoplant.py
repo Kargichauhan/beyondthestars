@@ -18,7 +18,7 @@ import astropy.units as u
 def get_exoplanet_data():
     url = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync"
     params = {
-        "query": "SELECT pl_name, ra, dec FROM ps ORDER BY pl_name",
+        "query": "SELECT pl_name, ra, dec, sy_dist FROM ps ORDER BY pl_name",
         "format": "json"
     }
     response = requests.get(url, params=params)
@@ -43,20 +43,22 @@ def convert_coordinates(ra, dec, parallax):
     return coord.cartesian.x.value, coord.cartesian.y.value, coord.cartesian.z.value
 
 def get_stars_near_exoplanet(exoplanet_ra, exoplanet_dec, max_stars=10, radius_deg=0.1):
-    query = f"""SELECT TOP {max_stars} source_id, ra, dec, parallax
+    
+    query = f"""SELECT TOP {max_stars} source_id, ra, dec, parallax, phot_g_mean_mag
                 FROM gaiadr3.gaia_source
                 WHERE 1=CONTAINS(POINT('ICRS', ra, dec),
                     CIRCLE('ICRS', {exoplanet_ra}, {exoplanet_dec}, {radius_deg}))
                 AND parallax > 0
+                ORDER BY phot_g_mean_mag DESC
                 """
 
     job = Gaia.launch_job_async(query)
     return job.get_results()
 
-def demonstrate_3d_positioning_for_exoplanet():
+def demonstrate_3d_positioning_for_exoplanet(exoplanet_ra,exoplanet_dec):
     exoplanet_name = "Example Exoplanet"
-    exoplanet_ra = 266.41683
-    exoplanet_dec = -29.00781
+    # exoplanet_ra = 266.41683
+    # exoplanet_dec = -29.00781
 
     print(f"Demonstrating 3D positioning for stars near {exoplanet_name}")
     print(f"Exoplanet coordinates: RA = {exoplanet_ra}, Dec = {exoplanet_dec}")

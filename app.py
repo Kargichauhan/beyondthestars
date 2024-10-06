@@ -23,9 +23,31 @@ def submit_data():
 @app.route('/api/exoplanet', methods=['GET'])
 def exoplanet():
     data = get_exoplanet_data()  # Call the function
-    print("\n3D Positioning Demonstration for an Exoplanet:")
-    print(demonstrate_3d_positioning_for_exoplanet())
     return jsonify(data)
+
+@app.route('/api/position', methods=['GET'])
+def position():
+    print(demonstrate_3d_positioning_for_exoplanet())
+    return jsonify()
+
+@app.route('/api/cartesian', methods=['POST'])
+def calculate_cartesian():
+    data = request.get_json()
+    distance = data.get('distance')  # In parsecs or a unit of your choice
+    ra = data.get('ra')  # Right Ascension in degrees
+    dec = data.get('dec')  # Declination in degrees
+
+    # Convert degrees to radians
+    import math
+    ra_rad = math.radians(ra)
+    dec_rad = math.radians(dec)
+
+    # Calculate Cartesian coordinates
+    x = distance * math.cos(dec_rad) * math.cos(ra_rad)
+    y = distance * math.cos(dec_rad) * math.sin(ra_rad)
+    z = distance * math.sin(dec_rad)
+
+    return jsonify({'x': x, 'y': y, 'z': z})
 
 if __name__ == '__main__':
     app.run(debug=True)
