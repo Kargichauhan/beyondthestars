@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spin the Planet Game</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+        }
+        #timer {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="score">Score: 0</div>
+    <div id="timer">Time: 10</div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // Set up scene, camera, and renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Create a sphere (planet)
+        const geometry = new THREE.SphereGeometry(2, 32, 32);
+        const textureLoader = new THREE.TextureLoader();
+        const planetTexture = textureLoader.load('/earth'); // Example texture
+
+        const material = new THREE.MeshBasicMaterial({ map: planetTexture });
+        const planet = new THREE.Mesh(geometry, material);
+        scene.add(planet);
+
+        // Add lighting
+        const ambientLight = new THREE.AmbientLight(0x404040); // Soft white light
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+        pointLight.position.set(10, 10, 10);
+        scene.add(pointLight);
+
+        // Camera positioning
+        camera.position.z = 5;
+
+        // Orbit controls to rotate the planet
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;  // Smooth rotation
+        controls.dampingFactor = 0.05;
+        controls.rotateSpeed = 0.5;
+
+        // Variables for the game
+        let rotationCount = 0;    // Number of full rotations
+        let startTime = null;
+        let gameStarted = false;
+        const gameDuration = 10;  // Game lasts for 10 seconds
+        let timeLeft = gameDuration;
+        const scoreElement = document.getElementById('score');
+        const timerElement = document.getElementById('timer');
+        
+        let lastRotationY = 0; // To track last frame rotation value
+
+        // Function to start the game
+        function startGame() {
+            startTime = Date.now();
+            gameStarted = true;
+            rotationCount = 0;
+            timeLeft = gameDuration;
+            updateScore();
+            controls.reset(); // Reset the planet's position
+            lastRotationY = 0;
+        }
+
+        // Function to update the score
+        function updateScore() {
+            scoreElement.textContent = `Score: ${rotationCount}`;
+        }
+
+        // Function to check if a full rotation has occurred
+        function checkRotation() {
+            const currentRotationY = planet.rotation.y;
+            
+            // Detect if we crossed a full rotation (2 * Math.PI radians, or 360 degrees)
+            if (Math.abs(currentRotationY - lastRotationY) > Math.PI) {
+                if (currentRotationY > lastRotationY) {
+                    rotationCount++;
+                }
+                lastRotationY = currentRotationY;
+                updateScore();
+            }
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (gameStarted) {
+                const elapsedTime = (Date.now() - startTime) / 1000;
+                timeLeft = Math.max(0, gameDuration - elapsedTime);
+                timerElement.textContent = `Time: ${timeLeft.toFixed(1)}`;
+
+                // If the time is up, end the game
+                if (timeLeft <= 0) {
+                    gameStarted = false;
+                    alert(`Game Over! Your score: ${rotationCount}`);
+                }
+            }
+
+            checkRotation(); // Check for rotation each frame
+            controls.update(); // Allow controls to rotate the object
+            renderer.render(scene, camera);
+        }
+
+        // Event listener to start the game
+        document.body.addEventListener('click', () => {
+            if (!gameStarted) {
+                startGame();
+            }
+        });
+
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
+    </script>
+</body>
+</html>

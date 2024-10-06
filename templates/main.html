@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Frontend</title>
+    <link rel="stylesheet" href="/static/styles.css"> <!-- Optional CSS -->
+    <style>
+        .scrollable-list {
+            max-height: 200px; /* Adjust height as needed */
+            overflow-y: auto;  /* Enable vertical scrolling */
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .scrollable-list ul {
+            list-style-type: none; /* Remove default list styling */
+            padding: 0;           /* Remove padding */
+            margin: 0;            /* Remove margin */
+        }
+        .planet-item {
+            cursor: pointer;      /* Change cursor to pointer */
+            padding: 5px;
+            border-radius: 3px;
+        }
+        .planet-item:hover {
+            background-color: #e0e0e0; /* Highlight on hover */
+        }
+        /* Spinner styles */
+        .spinner {
+            display: none; /* Hidden by default */
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin-left: 10px; /* Space between button and spinner */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Flask Service</h1>
+    
+    <form id="data-form">
+        <input type="text" id="name" placeholder="Enter your name" required>
+        <button type="submit">Submit</button>
+    </form>
+    
+    <button id="fetch-exoplanet">Get Exoplanet Data</button>
+    <div class="spinner" id="loading-spinner"></div> <!-- Spinner div -->
+    
+    <div id="response"></div>
+    <div class="scrollable-list">
+        <ul id="exoplanet-data"></ul>
+    </div>
+    <div id="selected-planet" style="margin-top: 10px; font-weight: bold;"></div> <!-- Selected planet display -->
+
+    <h3>Calculate Cartesian Coordinates</h3>
+    <form id="cartesian-form">
+        <input type="number" id="sy_dist" step="any"  placeholder="sy_dist (parsecs)" required>
+        <input type="number" id="ra" step="any" placeholder="Right Ascension (degrees)" required>
+        <input type="number" id="dec" step="any" placeholder="Declination (degrees)" required>
+        <button type="submit">Calculate</button>
+    </form>
+    <div id="cartesian-coords" style="margin-top: 10px; font-weight: bold;"></div> <!-- Display Cartesian coordinates -->
+    <button id="fetch-positions">Get Exoplanet Positions</button>
+    <div id="response2"></div>
+    <div class="mbr-section-btn-main" role="tablist"><a class="btn btn-secondary display-4" href="/threed">
+        Planetview
+    </a></div>
+    <script>
+        let selectedPlanetData = {}; // Store selected planet data
+
+        document.getElementById('data-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('name').value;
+
+            fetch('/api/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('response').innerText = data.message;
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        document.getElementById('fetch-exoplanet').addEventListener('click', function() {
+            const spinner = document.getElementById('loading-spinner');
+            spinner.style.display = 'inline-block'; // Show the spinner
+
+            fetch('/api/exoplanet')
+                .then(response => response.json())
+                .then(data => {
+                    const exoplanetList = document.getElementById('exoplanet-data');
+                    exoplanetList.innerHTML = ''; // Clear previous results
+                    data.forEach(planet => {
+                        const listItem = document.createElement('li');
+                        listItem.className = 'planet-item';
+                        listItem.innerText = planet.pl_name; // Display the planet name
+                        listItem.onclick = function() {
+                            document.getElementById('selected-planet').innerText = `Selected Planet: ${planet.pl_name}`;
+                            // Store selected planet data
+                            selectedPlanetData = {
+                                sy_dist: planet.sy_dist, // Assuming these properties exist
+                                ra: planet.ra,
+                                dec: planet.dec
+                            };
+                            // Populate input fields
+                            document.getElementById('sy_dist').value = selectedPlanetData.sy_dist;
+                            document.getElementById('ra').value = selectedPlanetData.ra;
+                            document.getElementById('dec').value = selectedPlanetData.dec;
+                        };
+                        exoplanetList.appendChild(listItem);
+                    });
+                })
+                .catch(error => console.error('Error:', error))
+                .finally(() => {
+                    spinner.style.display = 'none'; // Hide the spinner
+                });
+        });
+
+        document.getElementById('cartesian-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const { sy_dist, ra, dec } = selectedPlanetData;
+            const distance = sy_dist
+
+            fetch('/api/cartesian', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ distance, ra, dec })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('cartesian-coords').innerText = `Cartesian Coordinates: X: ${data.x}, Y: ${data.y}, Z: ${data.z}`;
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        document.getElementById('fetch-positions').addEventListener('click', function() {
+            event.preventDefault();
+            const { sy_dist, ra, dec } = selectedPlanetData;
+
+            fetch('/api/position', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ra, dec })
+             })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('response2').textContent = `Position: ${JSON.stringify(data)}`;
+            })
+            .catch(error => {
+                console.error('Error:', error)
+                document.getElementById('response2').textContent = 'Error: ' + error.message;
+            })
+            .finally(() => {
+                spinner.style.display = 'none'; // Hide the spinner
+            });
+        });
+
+    </script>
+</body>
+</html>

@@ -1,178 +1,152 @@
 <!DOCTYPE html>
-<html lang="en">
+<html  >
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flask Frontend</title>
-    <link rel="stylesheet" href="/static/styles.css"> <!-- Optional CSS -->
-    <style>
-        .scrollable-list {
-            max-height: 200px; /* Adjust height as needed */
-            overflow-y: auto;  /* Enable vertical scrolling */
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-        .scrollable-list ul {
-            list-style-type: none; /* Remove default list styling */
-            padding: 0;           /* Remove padding */
-            margin: 0;            /* Remove margin */
-        }
-        .planet-item {
-            cursor: pointer;      /* Change cursor to pointer */
-            padding: 5px;
-            border-radius: 3px;
-        }
-        .planet-item:hover {
-            background-color: #e0e0e0; /* Highlight on hover */
-        }
-        /* Spinner styles */
-        .spinner {
-            display: none; /* Hidden by default */
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-            margin-left: 10px; /* Space between button and spinner */
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+  
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+  <link rel="shortcut icon" href="/static/assets/images/09-toi3757b-removebg-preview-128x107.png" type="image/x-icon">
+  <meta name="description" content="">
+  
+  
+  <title>Home</title>
+  <link rel="stylesheet" href="/static/assets/web/assets/mobirise-icons2/mobirise2.css">
+  <link rel="stylesheet" href="/static/assets/icon54-v3/style.css">
+  <link rel="stylesheet" href="/static/assets/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/assets/bootstrap/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="/static/assets/bootstrap/css/bootstrap-reboot.min.css">
+  <link rel="stylesheet" href="/static/assets/parallax/jarallax.css">
+  <link rel="stylesheet" href="/static/assets/popup-overlay-plugin/style.css">
+  <link rel="stylesheet" href="/static/assets/smart-cart/minicart-theme.css">
+  <link rel="stylesheet" href="/static/assets/dropdown/css/style.css">
+  <link rel="stylesheet" href="/static/assets/socicon/css/styles.css">
+  <link rel="stylesheet" href="/static/assets/theme/css/style.css">
+  <link rel="stylesheet" href="/static/assets/recaptcha.css">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Patua+One:400&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Patua+One:400&display=swap"></noscript>
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Urbanist:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Urbanist:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap"></noscript>
+  <link rel="preload" as="style" href="/static/assets/mobirise/css/mbr-additional.css?v=Patm5h"><link rel="stylesheet" href="/static/assets/mobirise/css/mbr-additional.css?v=Patm5h" type="text/css">
+
+  
+  
+  
 </head>
 <body>
-    <h1>Flask Service</h1>
-    
-    <form id="data-form">
-        <input type="text" id="name" placeholder="Enter your name" required>
-        <button type="submit">Submit</button>
-    </form>
-    
-    <button id="fetch-exoplanet">Get Exoplanet Data</button>
-    <div class="spinner" id="loading-spinner"></div> <!-- Spinner div -->
-    
-    <div id="response"></div>
-    <div class="scrollable-list">
-        <ul id="exoplanet-data"></ul>
-    </div>
-    <div id="selected-planet" style="margin-top: 10px; font-weight: bold;"></div> <!-- Selected planet display -->
+  
+  <section data-bs-version="5.1" class="menu menu01 progressm5 cid-ufFEiZtwns" once="menu" id="menu01-0">
 
-    <h3>Calculate Cartesian Coordinates</h3>
-    <form id="cartesian-form">
-        <input type="number" id="sy_dist" step="any"  placeholder="sy_dist (parsecs)" required>
-        <input type="number" id="ra" step="any" placeholder="Right Ascension (degrees)" required>
-        <input type="number" id="dec" step="any" placeholder="Declination (degrees)" required>
-        <button type="submit">Calculate</button>
-    </form>
-    <div id="cartesian-coords" style="margin-top: 10px; font-weight: bold;"></div> <!-- Display Cartesian coordinates -->
-    <button id="fetch-positions">Get Exoplanet Positions</button>
-    <div id="response2"></div>
-    <script>
-        let selectedPlanetData = {}; // Store selected planet data
+    
 
-        document.getElementById('data-form').addEventListener('submit', function(event) {
-            event.preventDefault();
+    <nav class="navbar navbar-dropdown navbar-expand-lg">
+        <div class="menu_box container-fluid">
+            <div class="navbar-brand d-flex">
+                
+                <span class="navbar-caption-wrap"><a class="navbar-caption display-7" href="https://beyondstars.space/"><span class="icon54-v3-planet-stars mbr-iconfont mbr-iconfont-btn"></span></a></span>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbarSupportedContent" data-bs-target="#navbarSupportedContent" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                    <div class="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav nav-dropdown" data-app-modern-menu="true"><li class="nav-item">
+                        <a class="nav-link link text-info text-primary display-4" href="index.html">
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link link text-info text-primary display-4" href="project">Project</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link link text-info text-primary display-4" href="team">Team</a>
+                    </li></ul>
+                <div class="mbr-section-btn-main" role="tablist"><a class="btn btn-secondary display-4" href="exosky">
+                        Get started
+                    </a></div>
+                
+            </div>
+        </div>
+    </nav>
+</section>
+
+<section data-bs-version="5.1" class="header02 progressm5 cid-ufFEj7Rmda mbr-fullscreen mbr-parallax-background" id="header02-1">
+	
+
+	
+	<div class="mbr-overlay" style="opacity: 0.2; background-color: rgb(6, 6, 6);"></div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div class="content-wrapper">
+					<h1 class="mbr-section-title mbr-fonts-style display-1">
+						Beyond Stars</h1>
+					<div class="desc-wrapper">
+						<p class="mbr-desc mbr-fonts-style display-4">
+							Exploring Boundaries, Creating Solutions, Innovating the Future
+						</p>
+					</div>
+					<div class="text-wrapper">
+						<p class="mbr-text mbr-fonts-style display-7">We are a team of innovators, explorers, and problem solvers. As participants in the NASA Space Apps Challenge 2024, we push the boundaries of what's possible with creativity and technical expertise<br><br>Join us on our journey.
+						</p>
+					</div>
+					<div class="mbr-section-btn"><a class="btn btn-danger display-4" href="project">
+							<span class="mobi-mbri mobi-mbri-arrow-next mbr-iconfont mbr-iconfont-btn"></span>
+							Get started
+						</a></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section data-bs-version="5.1" class="footer01 progressm5 cid-ufFEomnLN4" once="footers" id="footer01-a">
+    
+
+    
+    
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+               
+            </div>
+            <div class="col-12">
+                
+            </div>
+        </div>
+        <div class="row items-wrapper">
             
-            const name = document.getElementById('name').value;
+            
+            
+        </div>
+        <div class="row">
+            <div class="col-12">
+                
+                <p class="mbr-copy mbr-fonts-style display-4">
+                    © Copyright 2024 Beyond Stars</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-            fetch('/api/submit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ name })
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('response').innerText = data.message;
-            })
-            .catch(error => console.error('Error:', error));
-        });
 
-        document.getElementById('fetch-exoplanet').addEventListener('click', function() {
-            const spinner = document.getElementById('loading-spinner');
-            spinner.style.display = 'inline-block'; // Show the spinner
-
-            fetch('/api/exoplanet')
-                .then(response => response.json())
-                .then(data => {
-                    const exoplanetList = document.getElementById('exoplanet-data');
-                    exoplanetList.innerHTML = ''; // Clear previous results
-                    data.forEach(planet => {
-                        const listItem = document.createElement('li');
-                        listItem.className = 'planet-item';
-                        listItem.innerText = planet.pl_name; // Display the planet name
-                        listItem.onclick = function() {
-                            document.getElementById('selected-planet').innerText = `Selected Planet: ${planet.pl_name}`;
-                            // Store selected planet data
-                            selectedPlanetData = {
-                                sy_dist: planet.sy_dist, // Assuming these properties exist
-                                ra: planet.ra,
-                                dec: planet.dec
-                            };
-                            // Populate input fields
-                            document.getElementById('sy_dist').value = selectedPlanetData.sy_dist;
-                            document.getElementById('ra').value = selectedPlanetData.ra;
-                            document.getElementById('dec').value = selectedPlanetData.dec;
-                        };
-                        exoplanetList.appendChild(listItem);
-                    });
-                })
-                .catch(error => console.error('Error:', error))
-                .finally(() => {
-                    spinner.style.display = 'none'; // Hide the spinner
-                });
-        });
-
-        document.getElementById('cartesian-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const { sy_dist, ra, dec } = selectedPlanetData;
-            const distance = sy_dist
-
-            fetch('/api/cartesian', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ distance, ra, dec })
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('cartesian-coords').innerText = `Cartesian Coordinates: X: ${data.x}, Y: ${data.y}, Z: ${data.z}`;
-            })
-            .catch(error => console.error('Error:', error));
-        });
-
-        document.getElementById('fetch-positions').addEventListener('click', function() {
-            event.preventDefault();
-            const { sy_dist, ra, dec } = selectedPlanetData;
-
-            fetch('/api/position', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ ra, dec })
-             })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('response2').textContent = `Position: ${JSON.stringify(data)}`;
-            })
-            .catch(error => {
-                console.error('Error:', error)
-                document.getElementById('response2').textContent = 'Error: ' + error.message;
-            })
-            .finally(() => {
-                spinner.style.display = 'none'; // Hide the spinner
-            });
-        });
-
-    </script>
+<script src="/static/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/assets/parallax/jarallax.js"></script>
+  <script src="/static/assets/smoothscroll/smooth-scroll.js"></script>
+  <script src="/static/assets/ytplayer/index.js"></script>
+  <script src="/static/assets/smart-cart/minicart.js"></script>
+  <script src="/static/assets/smart-cart/minicart-customizer.js"></script>
+  <script src="/static/assets/dropdown/js/navbar-dropdown.js"></script>
+  <script src="/static/assets/theme/js/script.js"></script>
+  <script src="/static/assets/formoid.min.js"></script>
+  
+  
+  
 </body>
 </html>

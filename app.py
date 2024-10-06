@@ -1,11 +1,32 @@
 from flask import Flask, jsonify, request, render_template
 from exoplant import get_exoplanet_data, demonstrate_3d_positioning_for_exoplanet  # Import the function
+from flask import send_file
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('./index.html')
+
+@app.route('/earth')
+def earth():
+    return send_file('./earth.jpg', mimetype='image/jpg')
+
+@app.route('/threed')
+def threed():
+    return render_template('threedplanet.html')
+
+@app.route('/exosky')
+def exosky():
+    return render_template('exosky.html')
+
+@app.route('/project')
+def project():
+    return render_template('project.html')
+
+@app.route('/team')
+def team():
+    return render_template('team.html')
 
 @app.route('/api/data', methods=['GET'])
 def get_data():
