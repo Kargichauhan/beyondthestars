@@ -25,10 +25,13 @@ def exoplanet():
     data = get_exoplanet_data()  # Call the function
     return jsonify(data)
 
-@app.route('/api/position', methods=['GET'])
+@app.route('/api/position', methods=['POST'])
 def position():
-    print(demonstrate_3d_positioning_for_exoplanet())
-    return jsonify()
+    data = request.get_json()
+    ra = data.get('ra')  # Right Ascension in degrees
+    dec = data.get('dec')  # Declination in degrees
+
+    return jsonify(demonstrate_3d_positioning_for_exoplanet(ra, dec))
 
 @app.route('/api/cartesian', methods=['POST'])
 def calculate_cartesian():

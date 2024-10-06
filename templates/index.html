@@ -70,7 +70,8 @@
         <button type="submit">Calculate</button>
     </form>
     <div id="cartesian-coords" style="margin-top: 10px; font-weight: bold;"></div> <!-- Display Cartesian coordinates -->
-
+    <button id="fetch-positions">Get Exoplanet Positions</button>
+    <div id="response2"></div>
     <script>
         let selectedPlanetData = {}; // Store selected planet data
 
@@ -147,6 +148,31 @@
             })
             .catch(error => console.error('Error:', error));
         });
+
+        document.getElementById('fetch-positions').addEventListener('click', function() {
+            event.preventDefault();
+            const { sy_dist, ra, dec } = selectedPlanetData;
+
+            fetch('/api/position', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ra, dec })
+             })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('response2').textContent = `Position: ${JSON.stringify(data)}`;
+            })
+            .catch(error => {
+                console.error('Error:', error)
+                document.getElementById('response2').textContent = 'Error: ' + error.message;
+            })
+            .finally(() => {
+                spinner.style.display = 'none'; // Hide the spinner
+            });
+        });
+
     </script>
 </body>
 </html>

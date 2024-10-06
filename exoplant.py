@@ -10,6 +10,7 @@ The app demonstrates basic API interaction, data parsing, and user input handlin
 # python3 -m venv exosky_env
 # source exosky_env/bin/activate
 # pip3 install requests
+from flask import json
 import requests
 from astroquery.gaia import Gaia
 from astropy.coordinates import SkyCoord, Distance
@@ -63,13 +64,16 @@ def demonstrate_3d_positioning_for_exoplanet(exoplanet_ra,exoplanet_dec):
     print(f"Demonstrating 3D positioning for stars near {exoplanet_name}")
     print(f"Exoplanet coordinates: RA = {exoplanet_ra}, Dec = {exoplanet_dec}")
 
-    nearby_stars = get_stars_near_exoplanet(exoplanet_ra, exoplanet_dec, max_stars=10, radius_deg=0.5)
+    nearby_stars =  get_stars_near_exoplanet(exoplanet_ra, exoplanet_dec, max_stars=10, radius_deg=0.5)
     print(f"Number of stars found near {exoplanet_name}: {len(nearby_stars)}")
 
+    ret = {}
     if len(nearby_stars) > 0:
         print(f"Nearby stars (up to {len(nearby_stars)}):")
         for i, star in enumerate(nearby_stars):
             x, y, z = convert_coordinates(star['ra'], star['dec'], star['parallax'])
             print(f"Star {i+1}: x={x:.2f}, y={y:.2f}, z={z:.2f} parsecs")
+            ret[i] = f"Star {i+1}: x={x:.2f}, y={y:.2f}, z={z:.2f} parsecs, brighness={star['phot_g_mean_mag']}"
     else:
         print("No stars found with reliable parallax data near this exoplanet.")
+    return  ret
