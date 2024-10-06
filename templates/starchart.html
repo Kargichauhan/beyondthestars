@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Chart</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .star {
+            stroke: white;
+            stroke-width: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Star Chart</h1>
+    <div id="chart"></div>
+
+    <script>
+        // Example star data: RA (degrees), Dec (degrees), parallax (mas), magnitude
+        const starData = [
+            { ra: 45.034, dec: 16.509, parallax: 1.764, magnitude: 2.5 },
+            { ra: 83.633, dec: 22.014, parallax: 2.32, magnitude: 0.4 },
+            { ra: 101.287, dec: -16.716, parallax: 0.747, magnitude: 3.7 },
+            { ra: 120.896, dec: -40.003, parallax: 0.379, magnitude: 4.5 },
+            { ra: 53.232, dec: -9.458, parallax: 1.13, magnitude: 1.9 }
+        ];
+
+        // Set chart dimensions
+        const width = 800;
+        const height = 800;
+        const margin = 50;
+
+        // Create an SVG container
+        const svg = d3.select('#chart').append('svg')
+            .attr('width', width)
+            .attr('height', height)
+            .style('background', 'black');
+
+        // Define color scale for magnitude (higher magnitude = dimmer = blue, lower magnitude = brighter = red)
+        const colorScale = d3.scaleLinear()
+            .domain([d3.min(starData, d => d.magnitude), d3.max(starData, d => d.magnitude)])
+            .range(['red', 'blue']);
+
+        // Define size scale for parallax (higher parallax = closer = larger)
+        const sizeScale = d3.scaleSqrt()
+            .domain([d3.min(starData, d => d.parallax), d3.max(starData, d => d.parallax)])
+            .range([2, 10]);
+
+        // Function to convert RA/Dec to 2D chart coordinates (basic projection for star chart)
+        function raDecToXY(ra, dec) {
+            const x = (ra / 360) * (width - 2 * margin) + margin;
+            const y = (height / 2) - ((dec / 90) * (height / 2 - margin));
+            return { x, y };
+        }
+
+        // Plot stars
+        svg.selectAll('circle')
+            .data(starData)
+            .enter()
+            .append('circle')
+            .attr('class', 'star')
+            .attr('cx', d => raDecToXY(d.ra, d.dec).x)
+            .attr('cy', d => raDecToXY(d.ra, d.dec).y)
+            .attr('r', d => sizeScale(d.parallax))
+            .attr('fill', d => colorScale(d.magnitude));
+
+        // Add labels for stars (optional)
+        svg.selectAll('text')
+            .data(starData)
+            .enter()
+            .append('text')
+            .attr('x', d => raDecToXY(d.ra, d.dec).x + 10)
+            .attr('y', d => raDecToXY(d.ra, d.dec).y + 4)
+            .attr('fill', 'white')
+            .attr('font-size', '10px')
+            .text(d => `Mag: ${d.magnitude.toFixed(1)}`);
+    </script>
+</body>
+</html>

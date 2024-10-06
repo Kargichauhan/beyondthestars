@@ -311,16 +311,19 @@
         <ul id="exoplanet-data"></ul>
     </div>
     <div id="selected-planet" style="margin-top: 10px; font-weight: bold;"></div> <!-- Selected planet display -->
-    <h3>Calculate Cartesian Coordinates</h3>
+    <h3>Show Planet Cartesian Coordinates</h3>
     <form id="cartesian-form">
         <input type="number" id="sy_dist" step="any"  placeholder="sy_dist (parsecs)" required>
         <input type="number" id="ra" step="any" placeholder="Right Ascension (degrees)" required>
         <input type="number" id="dec" step="any" placeholder="Declination (degrees)" required>
-        <button type="submit">Calculate</button>
+        <!-- <button type="submit">Calculate</button> -->
     </form>
     <div id="cartesian-coords" style="margin-top: 10px; font-weight: bold;"></div> <!-- Display Cartesian coordinates -->
-    <div class="mbr-section-btn-main" role="tablist"><button class="btn btn-secondary display-4" id="fetch-positions">Get 10 Nearest stars from the Planet ordered by brightness</button>
+    <div class="mbr-section-btn-main" role="tablist"><a class="btn btn-secondary display-4" href="starchart">
+        Create Star Chart for 5 nearest stars to the planet
+    </a>
     </div>
+    <button class="btn btn-secondary display-4" id="fetch-positions">Get 10 Nearest stars from the Planet ordered by brightness</button>
     <div id="response2"></div>
     <div class="mbr-section-btn-main" role="tablist"><a class="btn btn-secondary display-4" href="/threed">
         Planetview

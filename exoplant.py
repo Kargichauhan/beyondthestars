@@ -43,14 +43,13 @@ def convert_coordinates(ra, dec, parallax):
     coord = SkyCoord(ra, dec, distance=distance, unit=('deg', 'deg', 'pc'), frame='icrs')
     return coord.cartesian.x.value, coord.cartesian.y.value, coord.cartesian.z.value
 
-def get_stars_near_exoplanet(exoplanet_ra, exoplanet_dec, max_stars=10, radius_deg=0.1):
+def get_stars_near_exoplanet(exoplanet_ra, exoplanet_dec, max_stars=20, radius_deg=0.1):
     
     query = f"""SELECT TOP {max_stars} source_id, ra, dec, parallax, phot_g_mean_mag
                 FROM gaiadr3.gaia_source
                 WHERE 1=CONTAINS(POINT('ICRS', ra, dec),
                     CIRCLE('ICRS', {exoplanet_ra}, {exoplanet_dec}, {radius_deg}))
                 AND parallax > 0
-                ORDER BY phot_g_mean_mag DESC
                 """
 
     job = Gaia.launch_job_async(query)
@@ -72,8 +71,19 @@ def demonstrate_3d_positioning_for_exoplanet(exoplanet_ra,exoplanet_dec):
         print(f"Nearby stars (up to {len(nearby_stars)}):")
         for i, star in enumerate(nearby_stars):
             x, y, z = convert_coordinates(star['ra'], star['dec'], star['parallax'])
-            print(f"Star {i+1}: x={x:.2f}, y={y:.2f}, z={z:.2f} parsecs")
+            print(f"Star {i+1}: x={x:.2f}, y={y:.2f}, z={z:.2f} parsecs, brighness={star['phot_g_mean_mag']}")
             ret[i] = f"Star {i+1}: x={x:.2f}, y={y:.2f}, z={z:.2f} parsecs, brighness={star['phot_g_mean_mag']}"
     else:
         print("No stars found with reliable parallax data near this exoplanet.")
     return  ret
+
+def showStars(exoplanet_ra = 266.41683,exoplanet_dec= -29.00781):
+    exoplanet_name = "Example Exoplanet"
+    # exoplanet_ra = 266.41683
+    # exoplanet_dec = -29.00781
+
+    print(f"Demonstrating 3D positioning for stars near {exoplanet_name}")
+    print(f"Exoplanet coordinates: RA = {exoplanet_ra}, Dec = {exoplanet_dec}")
+
+    nearby_stars =  get_stars_near_exoplanet(exoplanet_ra, exoplanet_dec, max_stars=10, radius_deg=0.5)
+    return nearby_stars

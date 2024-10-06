@@ -43,7 +43,18 @@
         // Create a sphere (planet)
         const geometry = new THREE.SphereGeometry(2, 32, 32);
         const textureLoader = new THREE.TextureLoader();
-        const planetTexture = textureLoader.load('/earth'); // Example texture
+        const planets = ['ceres', 'venus', 'makemake', 'haumea', 'mars', 'mercury', 'uranus', 'earth'];
+
+        // Function to get a random planet
+        function getRandomPlanet() {
+            const randomIndex = Math.floor(Math.random() * planets.length);
+            return planets[randomIndex];
+        }
+
+        // Use the random planet to load the texture
+        const randomPlanet = getRandomPlanet();
+        const planetTexture = textureLoader.load(`/${randomPlanet}`); // Example texture
+        // const planetTexture = textureLoader.load('/earth'); // Example texture
 
         const material = new THREE.MeshBasicMaterial({ map: planetTexture });
         const planet = new THREE.Mesh(geometry, material);
